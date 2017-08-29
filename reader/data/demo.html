@@ -119,8 +119,16 @@
             color: #CE6D2A;
         }
 
-        .switch_night_daytime_2.active {
+        .s-n-d {
             display: none;
+        }
+
+        .switch_night_daytime.active {
+            display: block;
+        }
+
+        .switch_night_daytime_2.active {
+            display: block;
         }
         /* 控制面板 */
 
@@ -212,11 +220,11 @@
                     <i class="fa fa-font" aria-hidden="true"></i>
                     <p>字体</p>
                 </li>
-                <li class="switch_night_daytime_2 active">
+                <li class="switch_night_daytime_2 s-n-d">
                     <i class="fa fa-moon-o" aria-hidden="true"></i>
                     <p>夜间</p>
                 </li>
-                <li class="switch_night_daytime">
+                <li class="switch_night_daytime s-n-d active">
                     <i class="fa fa-sun-o" aria-hidden="true"></i>
                     <p>白天</p>
                 </li>
@@ -300,6 +308,7 @@
                     bottom_nav: $('.bottom-setting'),
                     action_mid: $('#action-mid'),
                     switch_night_daytime: $('.switch_night_daytime'),
+                    switch_night_daytime_2: $('.switch_night_daytime_2'),
                     fa_font: $('.click-fa-font'),
                     font_container: $('#font-container'),
                     large_font: $('#large-font'),
@@ -327,13 +336,13 @@
                 switch (initBackground) {
                     case 'rgb(255, 255, 255)': $('.active-1').show();
                         break;
-                    case 'rgb(231, 223, 202)': $('.active-2').show();
+                    case 'rgb(231, 223, 202)': $('.active-2').show(); Dom.switch_night_daytime.removeClass('active'); Dom.switch_night_daytime_2.addClass('active');
                         break;
                     case 'rgb(164, 164, 164)': $('.active-3').show();
                         break;
                     case 'rgb(212, 238, 209)': $('.active-4').show();
                         break;
-                    case 'rgb(42, 53, 70)': $('.active-5').show();
+                    case 'rgb(42, 53, 70)': $('.active-5').show(); Dom.switch_night_daytime.addClass('active'); Dom.switch_night_daytime_2.removeClass('active');
                         break;
                 }
                 function main() {
@@ -371,9 +380,20 @@
 
                     Dom.switch_night_daytime.click(function () {
                         //触发背景切换
-                        if(Dom.switch_night_daytime.hasClass('active')){
-                            
+                        if (Dom.switch_night_daytime.hasClass('active')) {
+                            Dom.switch_night_daytime.removeClass('active')
+                            Dom.switch_night_daytime_2.addClass('active')
                         }
+
+                        $('[style="background: #E7DFCA"]').click()
+                    })
+                    Dom.switch_night_daytime_2.click(function () {
+                        //触发背景切换
+                        if (Dom.switch_night_daytime_2.hasClass('active')) {
+                            Dom.switch_night_daytime.addClass('active')
+                            Dom.switch_night_daytime_2.removeClass('active')
+                        }
+                        $('[style="background: #2A3546"]').click()
                     })
 
                     Dom.large_font.click(function () {
