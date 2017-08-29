@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html ng-app="app">
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no,minimal-ui">
+    <meta name="format-detection" content="telephone=on">
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../node_modules/_font-awesome@4.7.0@font-awesome/css/font-awesome.css">
+    <style type="text/css">
+        body {
+            text-align: left;
+            width: 100%;
+            overflow-x: hidden;
+            background: #e9dfc7;
+            height: auto;
+        }
+
+        .m-read-content {
+            font-size: 14px;
+            color: #555;
+            line-height: 31px;
+            padding: 15px;
+        }
+
+        .m-read-content h4 {
+            font-size: 20px;
+            color: #736357;
+            border-bottom: 1px solid #736357;
+            letter-spacing: 2px;
+            margin: 0 0 1em 0;
+        }
+
+        .m-read-content p {
+            text-indent: 2em;
+            /*第一行缩进*/
+            margin: 0.5em 0;
+            letter-spacing: 0px;
+            /*段落文字间距是0*/
+            line-height: 24px;
+        }
+
+        .u-tab {
+            height: 34px;
+            margin: 10px auto;
+            line-height: 34px;
+            border-radius: 8px;
+            border: 1px solid #858382;
+            font-size: 12px;
+            background: #000;
+            opacity: .9;
+        }
+
+        .u-tab li {
+            display: inline-block;
+            width: 49%;
+            text-align: center;
+            color: #fff;
+        }
+
+        .u-tab li:nth-child(1) {
+            border-right: 1px solid #858382;
+        }
+
+        .m-button-bar {
+            width: 70%;
+            max-width: 800px;
+            padding: 5px;
+            margin: 0 auto;
+        }
+
+        .top-nav {
+            position: fixed;
+            top: 0px;
+            height: 50px;
+            width: 100%;
+            z-index: 9999;
+            background: #000;
+        }
+
+        .icon-back {
+            position: absolute;
+            top: 14px;
+            left: 10px;
+            font-size: 23px;
+            color: aliceblue;
+        }
+
+        .nav-title {
+            position: absolute;
+            top: 16px;
+            left: 42px;
+            color: #d5d5d6;
+        }
+        /* 设置导航的CSS */
+
+        .bottom-setting {
+            position: fixed;
+            bottom: 0;
+            height: 60px;
+            width: 100%;
+            z-index: 9999;
+            background: #000;
+        }
+
+        .bottom-setting ul {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+
+        .bottom-setting ul>li {
+            color: #fff;
+            text-align: center;
+        }
+
+        .click-fa-font.active {
+            color: #CE6D2A;
+        }
+
+        .switch_night_daytime_2.active {
+            display: none;
+        }
+        /* 控制面板 */
+
+        .nav-pannel {
+            position: fixed;
+            bottom: 59px;
+            height: 135px;
+            width: 100%;
+            background: none;
+            color: #fff;
+            background: #000;
+        }
+
+        .child-mod {
+            padding: 5px 10px;
+            margin: 15px;
+        }
+
+        .child-mod span {
+            display: inline-block;
+            padding-right: 20px;
+            padding-left: 10px;
+        }
+
+        .font-size-button {
+            background: none;
+            border: 1px #8c8c8c solid;
+            color: #fff;
+            border-radius: 16px;
+            padding: 5px 40px;
+            outline: none;
+        }
+
+        .child-mod button:nth-child(2) {
+            margin-right: 10px;
+        }
+
+        .bk-container {
+            position: relative;
+            width: 30px;
+            height: 30px;
+            border-radius: 15px;
+            display: inline-block;
+            vertical-align: -10px;
+            margin-right: 10px;
+        }
+
+        .bk-container-current {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            border: 1px #ff7800 solid;
+            display: inline-block;
+            top: -2px;
+            left: -2px;
+            display: none;
+        }
+
+        .article-action-mid {
+            position: fixed;
+            z-index: 10002;
+            width: 100%;
+            height: 40%;
+            top: 30%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root" class="container">
+
+        <div class="m-article-action">
+            <div class="article-action-mid" id="action-mid"></div>
+        </div>
+
+        <div id="top-nav" class="top-nav" style="display:none">
+            <i class="fa fa-arrow-circle-left icon-back" aria-hidden="true"></i>
+            <div class="nav-title">返回书架</div>
+        </div>
+
+        <div class="bottom-setting" style="display:none">
+            <ul>
+                <li>
+                    <i class="fa fa-list" aria-hidden="true"></i>
+                    <p>目录</p>
+                </li>
+                <li class="click-fa-font">
+                    <i class="fa fa-font" aria-hidden="true"></i>
+                    <p>字体</p>
+                </li>
+                <li class="switch_night_daytime_2 active">
+                    <i class="fa fa-moon-o" aria-hidden="true"></i>
+                    <p>夜间</p>
+                </li>
+                <li class="switch_night_daytime">
+                    <i class="fa fa-sun-o" aria-hidden="true"></i>
+                    <p>白天</p>
+                </li>
+            </ul>
+        </div>
+        <div id="fiction_chapter_title"></div>
+        <div id="fiction_container" class="m-read-content">
+            <h4>我是章节标题</h4>
+            <p>
+                我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说 我是小说我是小说我是小说我是小说 我是小说我是小说我是小说我是小说我是小说我是小说 我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说 我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说
+            </p>
+            <p>
+                我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说 我是小说我是小
+            </p>
+            <p>
+                我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说 我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说 我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说 我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说
+            </p>
+            <p>
+                我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说
+                我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说 我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说 我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说
+            </p>
+        </div>
+        <div class="m-button-bar">
+            <ul class="u-tab">
+                <li id="prev_button">上一章</li>
+                <li id="next_button">下一章</li>
+            </ul>
+        </div>
+        <div class="nav-pannel" id="font-container" style="display:none">
+            <div class="child-mod">
+                <span>字号</span>
+                <button id="large-font" class="font-size-button">大</button>
+                <button id="small-font" class="font-size-button">小</button>
+            </div>
+            <div class="child-mod">
+                <span>背景</span>
+                <div class="bk-container" style="background: #fff">
+                    <div class="bk-container-current active-1"></div>
+                </div>
+                <div class="bk-container" style="background: #E7DFCA">
+                    <div class="bk-container-current active-2"></div>
+                </div>
+                <div class="bk-container" style="background: #A4A4A4">
+                    <div class="bk-container-current active-3"></div>
+                </div>
+                <div class="bk-container" style="background: #D4EED1">
+                    <div class="bk-container-current active-4"></div>
+                </div>
+                <div class="bk-container" style="background: #2A3546">
+                    <div class="bk-container-current active-5"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../lib/zepto.min.js"></script>
+    <script>
+        window.jQuery = $
+    </script>
+    <script src="js/jquery.base64.js"></script>
+    <script src="js/jquery.jsonp.js"></script>
+
+    <script>
+            (function () {
+                let Util = (function () {
+                    let prefix = 'html5_reader_';
+                    let StorageGetter = function (key) {
+                        return localStorage.getItem(prefix + key)
+                    }
+                    let StorageSetter = function (key, val) {
+                        return localStorage.setItem(prefix + key, val)
+                    }
+                    return {
+                        StorageGetter: StorageGetter,
+                        StorageSetter: StorageSetter
+                    }
+                })()
+
+                var Dom = {
+                    top_nav: $('#top-nav'),
+                    bottom_nav: $('.bottom-setting'),
+                    action_mid: $('#action-mid'),
+                    switch_night_daytime: $('.switch_night_daytime'),
+                    fa_font: $('.click-fa-font'),
+                    font_container: $('#font-container'),
+                    large_font: $('#large-font'),
+                    small_font: $('#small-font'),
+                    fiction_container: $('#fiction_container'),
+                    child_mod: $('.child-mod'),
+                    bk_container: $('.bk-container'),
+                    $body: $(document.body)
+                }
+                var Win = $(window)
+                var doc = $(document)
+                var current = $('.bk-container-current')
+                var initFontSize = Util.StorageGetter('font-size')
+                initFontSize = parseInt(initFontSize)
+                if (!initFontSize) {
+                    initFontSize = 14
+                }
+                Dom.fiction_container.css('font-size', initFontSize)
+                var initBackground = Util.StorageGetter('backgroundColor')
+                if (!initBackground) {
+                    initBackground = 'rgb(231, 223, 202)'
+                }
+                Dom.$body.css('background', initBackground)
+                var initCurrent = Util.StorageGetter('current')
+                switch (initBackground) {
+                    case 'rgb(255, 255, 255)': $('.active-1').show();
+                        break;
+                    case 'rgb(231, 223, 202)': $('.active-2').show();
+                        break;
+                    case 'rgb(164, 164, 164)': $('.active-3').show();
+                        break;
+                    case 'rgb(212, 238, 209)': $('.active-4').show();
+                        break;
+                    case 'rgb(42, 53, 70)': $('.active-5').show();
+                        break;
+                }
+                function main() {
+                    //整个项目入口
+                    EventhHanlder()
+                }
+                function ReaderModel() {
+                    //实现和阅读器相关的数据互交方法
+                }
+                function ReaderBaseFrame() {
+                    //渲染基本的UI结构
+                }
+                function EventhHanlder() {
+                    //交互的事件绑定
+                    Dom.action_mid.click(function () {
+                        if (Dom.top_nav.css('display') === 'none') {
+                            Dom.bottom_nav.show()
+                            Dom.top_nav.show()
+                        } else {
+                            Dom.bottom_nav.hide()
+                            Dom.top_nav.hide()
+                            Dom.fa_font.removeClass('active')
+                            Dom.font_container.hide()
+                        }
+                    });
+
+                    Dom.fa_font.click(function () {
+                        Dom.fa_font.toggleClass('active')
+                        if (Dom.fa_font.hasClass('active')) {
+                            Dom.font_container.show()
+                        } else if (!Dom.fa_font.hasClass('active')) {
+                            Dom.font_container.hide()
+                        }
+                    })
+
+                    Dom.switch_night_daytime.click(function () {
+                        //触发背景切换
+                        if(Dom.switch_night_daytime.hasClass('active')){
+                            
+                        }
+                    })
+
+                    Dom.large_font.click(function () {
+                        if (initFontSize > 20) {
+                            return
+                        }
+                        initFontSize += 1
+                        Dom.fiction_container.css('font-size', initFontSize)
+                        Util.StorageSetter('font-size', initFontSize)
+                    })
+                    Dom.small_font.click(function () {
+                        if (initFontSize < 12) {
+                            return
+                        }
+                        initFontSize -= 1
+                        Dom.fiction_container.css('font-size', initFontSize)
+                        Util.StorageSetter('font-size', initFontSize)
+                    })
+
+                    Dom.bk_container.click(function () {
+                        var $this = $(this)
+                        var bcColor = this.style.background
+                        Dom.$body.css('background', bcColor)
+                        Util.StorageSetter('backgroundColor', bcColor)
+                        Util.StorageSetter('current', bcColor)
+                        switch (bcColor) {
+                            case 'rgb(255, 255, 255)': $this.children().show(); $this.siblings().children().hide();
+                                break;
+                            case 'rgb(231, 223, 202)': $this.children().show(); $this.siblings().children().hide();
+                                break;
+                            case 'rgb(164, 164, 164)': $this.children().show(); $this.siblings().children().hide();
+                                break;
+                            case 'rgb(212, 238, 209)': $this.children().show(); $this.siblings().children().hide();
+                                break;
+                            case 'rgb(42, 53, 70)': $this.children().show(); $this.siblings().children().hide();
+                                break;
+                        }
+                    })
+
+                    Win.on('scroll', function () {
+                        Dom.bottom_nav.hide()
+                        Dom.top_nav.hide()
+                        Dom.fa_font.removeClass('active')
+                        Dom.font_container.hide()
+                    })
+                }
+
+                main()
+            })()
+    </script>
+</body>
+
+</html>
