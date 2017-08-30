@@ -232,20 +232,7 @@
         </div>
         <div id="fiction_chapter_title"></div>
         <div id="fiction_container" class="m-read-content">
-            <h4>我是章节标题</h4>
-            <p>
-                我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说 我是小说我是小说我是小说我是小说 我是小说我是小说我是小说我是小说我是小说我是小说 我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说 我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说
-            </p>
-            <p>
-                我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说 我是小说我是小
-            </p>
-            <p>
-                我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说 我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说 我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说 我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说
-            </p>
-            <p>
-                我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说
-                我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说 我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说 我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说我是小说
-            </p>
+
         </div>
         <div class="m-button-bar">
             <ul class="u-tab">
@@ -284,20 +271,33 @@
     <script>
         window.jQuery = $
     </script>
-    <script src="js/jquery.base64.js"></script>
-    <script src="js/jquery.jsonp.js"></script>
+    <script src="../js/jquery.base64.js"></script>
+    <script src="../js/jquery.jsonp.js"></script>
 
     <script>
             (function () {
                 let Util = (function () {
-                    let prefix = 'html5_reader_';
-                    let StorageGetter = function (key) {
+                    var prefix = 'html5_reader_';
+                    var StorageGetter = function (key) {
                         return localStorage.getItem(prefix + key)
                     }
-                    let StorageSetter = function (key, val) {
+                    var StorageSetter = function (key, val) {
                         return localStorage.setItem(prefix + key, val)
                     }
+                    var getJSONP = function (url, callback) {
+                        return $.jsonp({
+                            url: url,
+                            cache: true,
+                            callback: 'duokan_fiction_chapter',
+                            success: function (result) {
+                                var data = $.base64.decode(result);
+                                var json = decodeURIComponent(escape(data));
+                                callback(json);
+                            }
+                        })
+                    }
                     return {
+                        getJSONP: getJSONP,
                         StorageGetter: StorageGetter,
                         StorageSetter: StorageSetter
                     }
@@ -347,13 +347,58 @@
                 }
                 function main() {
                     //整个项目入口
+                    console.log()
+                    var readerModel = ReaderModel()
+                    var readerUI = ReaderBaseFrame(Dom.fiction_container)
+                    readerModel.init(function (data) {
+                        readerUI(data)
+                    })
                     EventhHanlder()
                 }
                 function ReaderModel() {
                     //实现和阅读器相关的数据互交方法
+                    var Chapter_id
+                    var init = function (UIcallback) {
+                        getFictionInfo(function () {
+                            getCurChapterContent(Chapter_id, function (data) {
+                                UIcallback && UIcallback(data);
+                            });
+                        })
+                    }
+                    var getFictionInfo = function (callback) {
+                        $.get('./chapter.json', function (data) {
+                            Chapter_id = data.chapters[1].chapter_id
+                            callback && callback()
+                        }, 'json')
+                    }
+                    var getCurChapterContent = function (chapter_id, callback) {
+                        $.get('./data' + chapter_id + '.json', function (data) {
+                            if (data.result === 0) {
+                                var url = data.jsonp;
+                                Util.getJSONP(url, function (data) {
+                                    callback && callback(data);
+                                });
+                            }
+                        }, 'json')
+                    }
+                    return {
+                        init: init
+                    }
                 }
-                function ReaderBaseFrame() {
+                function ReaderBaseFrame(container) {
                     //渲染基本的UI结构
+                    function parseChapterData(jsonData) {
+                        var jsonObj = JSON.parse(jsonData);
+                        var html = '<h4>' + jsonObj.t + '</h4>';
+                        for (var i = 0; i < jsonObj.p.length; i++) {
+                            html += '<p>' + jsonObj.p[i] + '</p>'
+                        }
+                        return html;
+                    }
+
+                    return function (data) {
+                        container.html(parseChapterData(data));
+                    }
                 }
                 function EventhHanlder() {
                     //交互的事件绑定
