@@ -276,6 +276,7 @@
 
     <script>
             (function () {
+                'use strict'
                 let Util = (function () {
                     var prefix = 'html5_reader_';
                     var StorageGetter = function (key) {
@@ -320,6 +321,8 @@
                 }
                 var Win = $(window)
                 var doc = $(document)
+                var readerModel
+                var readerUI
                 var current = $('.bk-container-current')
                 var initFontSize = Util.StorageGetter('font-size')
                 initFontSize = parseInt(initFontSize)
@@ -347,9 +350,8 @@
                 }
                 function main() {
                     //整个项目入口
-                    console.log()
-                    var readerModel = ReaderModel()
-                    var readerUI = ReaderBaseFrame(Dom.fiction_container)
+                    readerModel = ReaderModel()
+                    readerUI = ReaderBaseFrame(Dom.fiction_container)
                     readerModel.init(function (data) {
                         readerUI(data)
                     })
@@ -358,31 +360,71 @@
                 function ReaderModel() {
                     //实现和阅读器相关的数据互交方法
                     var Chapter_id
+                    var ChapterTotal
                     var init = function (UIcallback) {
-                        getFictionInfo(function () {
-                            getCurChapterContent(Chapter_id, function (data) {
-                                UIcallback && UIcallback(data);
-                            });
+                        getFictionInPromise().then((d) => {
+                            return getCurChapterContentPromise()
+                        }).then((data) => {
+                            UIcallback && UIcallback(data);
                         })
                     }
-                    var getFictionInfo = function (callback) {
-                        $.get('./chapter.json', function (data) {
-                            Chapter_id = data.chapters[1].chapter_id
-                            callback && callback()
-                        }, 'json')
+
+                    var getFictionInPromise = function () {
+                        return new Promise((resolve, reject) => {
+                            $.get('./chapter.json', function (data) {
+                                if (data.result === 0) {
+                                    Chapter_id = Util.StorageGetter('last_chapter_id')
+                                    if (Chapter_id === null) {
+                                        Chapter_id = data.chapters[1].chapter_id
+                                    }
+                                    ChapterTotal = data.chapters.length
+                                    resolve()
+                                } else {
+                                    reject()
+                                }
+                            }, 'json')
+                        })
                     }
-                    var getCurChapterContent = function (chapter_id, callback) {
-                        $.get('./data' + chapter_id + '.json', function (data) {
-                            if (data.result === 0) {
-                                var url = data.jsonp;
-                                Util.getJSONP(url, function (data) {
-                                    callback && callback(data);
-                                });
-                            }
-                        }, 'json')
+
+                    var getCurChapterContentPromise = function () {
+                        new Promise((resolve, reject) => {
+                            $.get('./data' + Chapter_id + '.json', function (data) {
+                                if (data.result === 0) {
+                                    var url = data.jsonp;
+                                    Util.getJSONP(url, function (data) {
+                                        resolve(data)
+                                    });
+                                } else {
+                                    reject()
+                                }
+                            }, 'json')
+                        })
+                    }
+
+                    var prevChapter = function (UIcallback) {
+                        Chapter_id = parseInt(Chapter_id, 10);
+                        if (Chapter_id == 0) {
+                            alert('模拟数据到头了！程序猿正在改提示框！');
+                            return;
+                        }
+                        Chapter_id -= 1;
+                        getCurChapterContent(Chapter_id, UIcallback);
+                        Util.StorageSetter('last_chapter_id', Chapter_id);
+                    }
+                    var nextChapter = function (UIcallback) {
+                        Chapter_id = parseInt(Chapter_id, 10);
+                        if (Chapter_id == ChapterTotal - 1) {
+                            alert('模拟数据到头了！程序猿正在改提示框！');
+                            return;
+                        }
+                        Chapter_id += 1;
+                        getCurChapterContent(Chapter_id, UIcallback);
+                        Util.StorageSetter('last_chapter_id', Chapter_id);
                     }
                     return {
-                        init: init
+                        init: init,
+                        prevChapter: prevChapter,
+                        nextChapter: nextChapter
                     }
                 }
                 function ReaderBaseFrame(container) {
@@ -483,6 +525,18 @@
                         Dom.top_nav.hide()
                         Dom.fa_font.removeClass('active')
                         Dom.font_container.hide()
+                    })
+                    $('#prev_button').click(function (data) {
+                        readerModel.prevChapter(function (data) {
+                            readerUI(data);
+                            $("body").scrollTop(0);
+                        });
+                    })
+                    $('#next_button').click(function (data) {
+                        readerModel.nextChapter(function (data) {
+                            readerUI(data);
+                            $("body").scrollTop(0);
+                        })
                     })
                 }
 
