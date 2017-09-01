@@ -1,4 +1,5 @@
 # Created by .ignore support plugin (hsz.mobi)
-/node_modules/
+/webAppReader/node_modules/
+/reader/node_modules/
 /.vscode/
 /.idea/
