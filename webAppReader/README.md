@@ -1,20 +1,7 @@
 
 
-# webappReader1
+# 使用方法
 
-
-
-## Usage
-
-
-
-## Developing
-
-
-
-### Tools
-
-Created with [Nodeclipse](https://github.com/Nodeclipse/nodeclipse-1)
- ([Eclipse Marketplace](http://marketplace.eclipse.org/content/nodeclipse), [site](http://www.nodeclipse.org))   
-
-Nodeclipse is free open-source project that grows with your contributions.
+1.下载代码
+2.node app.js
+3.打开 http://127.0.0.1:3001/
